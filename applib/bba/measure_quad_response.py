@@ -15,16 +15,18 @@ from functools import partial
 
 
 # Here that should be replaced
-from bact2.bluesky.live_plot import line_index, bpm_plot, orbit_plots
-from bact2.ophyd.utils.preprocessors.CounterSink import CounterSink
+# from bact2.bluesky.live_plot import line_index, bpm_plot, orbit_plots
+# from bact2.ophyd.utils.preprocessors.CounterSink import CounterSink
 
 
 def main():
 
-    qc = quadrupoles.QuadrupolesCollection(name="qc")
     bpm_devs = bpm.BPM("BPMZ1X003GP", name="bpm")
+    return
+
+    qc = quadrupoles.QuadrupolesCollection(name="qc")
     tn = tune.Tunes("TUNEZRP", name="tn")
-    cs = CounterSink(name="cs")
+    # cs = CounterSink(name="cs")
     
     quad_names = qc.power_converter_names.get()
     # Configure power converters to only ramp a small part
