@@ -36,7 +36,7 @@ def main():
     lps = orbit_plots.plots(magnet_name="no_name", ds="bpm_ds", x_pos="bpm_x_pos_raw", y_pos="bpm_y_pos_raw",
                             reading_count="bpm_count", log=RE.log)
 
-    if False:
+    if True:
         db = catalog["heavy"]
         RE.subscribe(db.v1.insert)
     else:
