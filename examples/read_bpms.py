@@ -3,7 +3,6 @@ from bact_mls_ophyd.devices.pp import bpm
 from bluesky import RunEngine
 from bluesky.callbacks import LiveTable
 from bact2.bluesky.live_plot import orbit_plots
-from bluesky.simulators import check_limits
 from databroker import catalog
 from event_model import RunRouter
 import bluesky.plans as bp
@@ -13,18 +12,13 @@ from functools import partial
 from bact2.databroker.msgpack import factories
 import os
 
+
 def main():
     bpm_devs = bpm.BPM("BPMZ1X003GP", name="bpm")
     if not bpm_devs.connected:
         bpm_devs.wait_for_connection()
 
-    # print(bpm_devs.describe())
     data = bpm_devs.read()
-    # print(data)
-    # print()
-    # print(bpm_devs.read())
-    # return
-
     lt = LiveTable(
         [
             bpm_devs.count.name
@@ -46,7 +40,7 @@ def main():
         db = catalog["heavy"]
         RE.subscribe(db.v1.insert)
     else:
-        savedir = path=os.path.join(os.environ["HOME"], "data", "bpm", "experiment")
+        savedir = path = os.path.join(os.environ["HOME"], "data", "bpm", "experiment")
         print(savedir)
         # return
         rr = RunRouter(
@@ -55,7 +49,7 @@ def main():
         RE.subscribe(rr)
 
     # RE.subscribe(db.v1.insert)
-    uids = RE(bp.count([bpm_devs], 5), [lt] #+ lps
+    uids = RE(bp.count([bpm_devs], 5), [lt]  # + lps
               )
     print(f"run uids {uids}")
 
