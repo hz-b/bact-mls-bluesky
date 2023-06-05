@@ -14,7 +14,9 @@ import os
 
 
 def main():
-    bpm_devs = bpm.BPM("BPMZ1X003GP", name="bpm")
+    prefix = "Pierre:DT:"
+    # bpm = BPM(prefix + "MDIZ2T5G", name="bpm")
+    bpm_devs = bpm.BPM(prefix+"BPMZ1X003GP", name="bpm")
     if not bpm_devs.connected:
         bpm_devs.wait_for_connection()
 

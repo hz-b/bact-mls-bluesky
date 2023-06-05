@@ -1,6 +1,8 @@
 import matplotlib
 # matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
+from bact2.bluesky.live_plot import orbit_plots
+from bact2.ophyd.utils.preprocessors.CounterSink import CounterSink
 from bact_mls_ophyd.devices.pp import bpm, quadrupoles
 from bact_mls_ophyd.devices.raw import tune
 from bluesky import RunEngine
@@ -20,14 +22,16 @@ from functools import partial
 
 
 def main():
-
+    # BESSSY II ...
+    # bpm_devs = bpm.BPM("MDIZ2T5G", name="bpm")
+    # MLS
     bpm_devs = bpm.BPM("BPMZ1X003GP", name="bpm")
-    return
+    # return
 
     qc = quadrupoles.QuadrupolesCollection(name="qc")
     tn = tune.Tunes("TUNEZRP", name="tn")
-    # cs = CounterSink(name="cs")
-    
+    cs = CounterSink(name="cs")
+
     quad_names = qc.power_converter_names.get()
     # Configure power converters to only ramp a small part
     for name in quad_names:
@@ -44,20 +48,20 @@ def main():
             "qc_sel_p_readback",
             "qc_sel_r_readback",
             bpm_devs.count.name,
-            cs.name,            
+            cs.name,
             tn.x.freq.name,
             tn.y.freq.name,
         ],
-        default_prec = 10
+        default_prec=10
     )
-    
-    lp = orbit_plots.plots(magnet_name=qc.sel.selected.name,
-                           ds=bpm_devs.ds.name,
-                           #ds = bpm_devs.x.pos_raw.name,
-                           x_pos=bpm_devs.x.pos.name,
-                           y_pos=bpm_devs.y.pos.name,
-                           reading_count=cs.setpoint.name,
-    )
+
+    # lp = orbit_plots.plots(magnet_name=qc.sel.selected.name,
+    #                        ds=bpm_devs.ds.name,
+    #                        # ds = bpm_devs.x.pos_raw.name,
+    #                        x_pos=bpm_devs.x.pos.name,
+    #                        y_pos=bpm_devs.y.pos.name,
+    #                        reading_count=cs.setpoint.name,
+    #                        )
 
     if not qc.connected:
         qc.wait_for_connection()
@@ -68,15 +72,16 @@ def main():
     cyc_currents = cycler(qc.sel, currents)
     cyc_count = cycler(cs, range(3))
     cmd = partial(bp.scan_nd, [bpm_devs, tn], cyc_magnets * cyc_currents * cyc_count)
-    check_limits(cmd())
+    # check_limits(cmd())
 
-    cbs = [lt] +lp
+    cbs = [lt] #+ lp
 
     db = catalog["heavy"]
 
-    md = dict(machine="MLS", nickname="bba", measurement_target="beam_based_alignment", target="beam based alignemnt test",
+    md = dict(machine="MLS", nickname="bba", measurement_target="beam_based_alignment",
+              target="beam based alignemnt test",
               comment="currently only testing if data taking works"
-    )
+              )
     RE = RunEngine(md)
     RE.subscribe(db.v1.insert)
     uids = RE(cmd(), cbs)
