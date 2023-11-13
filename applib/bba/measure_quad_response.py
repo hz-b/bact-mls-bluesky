@@ -1,8 +1,7 @@
 import matplotlib
 # matplotlib.use("Qt5Agg")
 import matplotlib.pyplot as plt
-from bact2.bluesky.live_plot import orbit_plots
-from bact2.ophyd.utils.preprocessors.CounterSink import CounterSink
+from bact_bessyii_mls_ophyd.devices.process.counter_sink import CounterSink
 from bact_mls_ophyd.devices.pp import bpm, quadrupoles
 from bact_mls_ophyd.devices.raw import tune
 from bluesky import RunEngine
@@ -16,17 +15,11 @@ import numpy as np
 from functools import partial
 
 
-# Here that should be replaced
-# from bact2.bluesky.live_plot import line_index, bpm_plot, orbit_plots
-# from bact2.ophyd.utils.preprocessors.CounterSink import CounterSink
-
-
 def main():
     # BESSSY II ...
     # bpm_devs = bpm.BPM("MDIZ2T5G", name="bpm")
     # MLS
     bpm_devs = bpm.BPM("BPMZ1X003GP", name="bpm")
-    # return
 
     qc = quadrupoles.QuadrupolesCollection(name="qc")
     tn = tune.Tunes("TUNEZRP", name="tn")
